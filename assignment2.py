@@ -23,6 +23,21 @@ def parse_args():
    '''
     Parse command line arguments.
     '''
+def parse_args():
+    ''' Create an ArgumentParser object with a description of the script's purpose '''
+    parser = argparse.ArgumentParser(description='Perform backups of client machines.')
+    
+    parser.add_argument('-t', '--type', required=True,  # Add a required argument for specifying the type of backup
+                        choices=['full', 'incremental', 'differential'],  # Restrict choices to predefined types
+                        help='Type of backup to perform')  # Provide a help message for the argument
+    
+    parser.add_argument('-c', '--clients', required=True,  # Add argument for specifying client IPs (or "all" for all clients)
+                        help='Comma-separated list of client IPs or "all"')
+    
+    parser.add_argument('--ssh-user', default='lmde',  # Add an optional argument for specifying the SSH username (default: 'lmde')
+                        help='SSH username for client connections (default: lmde)')
+    
+    return parser.parse_args()  # Parse and return the command-line arguments
 
 def get_clients(clients_arg):
 
