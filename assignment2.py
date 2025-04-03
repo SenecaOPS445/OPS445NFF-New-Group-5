@@ -12,3 +12,27 @@ CLIENT_MAPPING = {
     '192.168.27.5': 'Client-One',
     '192.168.27.10': 'Client-Two'
 }  # Mapping of client IPs to client names to be used dirctory structure
+
+def get_client_name(ip):
+    '''
+    Get the client name based on the IP address.
+    '''
+    return CLIENT_MAPPING.get(ip, ip)
+
+def parse_args():
+   '''
+    Parse command line arguments.
+    '''
+
+def get_clients(clients_arg):
+
+
+def update_symlink(link_path, target_path):
+
+
+def perform_backup(client_ip, backup_type, ssh_user):
+
+
+def main():
+
+
