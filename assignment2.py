@@ -76,6 +76,13 @@ def perform_backup(client_ip, backup_type, ssh_user):
         shutil.rmtree(backup_dir, ignore_errors=True)  # Remove the backup directory if rsync fails
         raise
 
+    # Update the symlink to point to the new backup
+    try:
+        # Update global latest
+        latest_link = os.path.join(dest_base, 'latest')  # Create the latest link path
+        update_symlink(latest_link, backup_dir)  # Update the symlink to point to the new backup
+        
+
 
 def main():
 
