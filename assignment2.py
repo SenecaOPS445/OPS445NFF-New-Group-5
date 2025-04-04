@@ -35,7 +35,16 @@ def perform_backup(client_ip, backup_type, ssh_user):
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S") # Get the current date and time
     dest_base = f"/home/lmde/backup/{client_name}" # Destination base directory
     backup_dir = os.path.join(dest_base, backup_type, timestamp) # Create the backup directory
-    source_path = f"{ssh_user}@{client_ip}:/home/lmde/dmuhammad4/" # Source path for the backup 
+    source_path = f"{ssh_user}@{client_ip}:/home/lmde/dmuhammad4/" # Source path for the backup
+
+    #creatting destination directory
+    try:
+        os.makedirs(backup_dir, exist_ok=True) # Create the backup directory
+    except OSError as e:
+        print(f"Error crating backup directory: {e}") # Print error message if directory creation fails
+        raise
+
+    
 
 def main():
 
