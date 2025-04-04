@@ -31,6 +31,13 @@ def update_symlink(link_path, target_path):
 
 
 def perform_backup(client_ip, backup_type, ssh_user):
+    '''
+    Perform the backup using rsync. it takes the client
+    IP address, backup type (full, incremental, or differential),
+    and SSH user as arguments. Determines link destination based on backup type.
+    Builds the rsync command and runs it. Updates symlinks to point to the new backup.
+    '''
+    # Getting the client name based on the IP address
     client_name = get_client_name(client_ip)  # Get the client name based on the IP address
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S") # Get the current date and time
     dest_base = f"/home/lmde/backup/{client_name}" # Destination base directory
