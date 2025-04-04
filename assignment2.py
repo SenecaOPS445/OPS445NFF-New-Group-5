@@ -81,7 +81,14 @@ def perform_backup(client_ip, backup_type, ssh_user):
         # Update global latest
         latest_link = os.path.join(dest_base, 'latest')  # Create the latest link path
         update_symlink(latest_link, backup_dir)  # Update the symlink to point to the new backup
+
+        # Update type-specific latest
+        type_latest = os.path.join(dest_base, backup_type, 'latest')  # Create the type-specific latest link path
+        update_symlink(type_latest, timestamp)  # Update the symlink to point to the new backup
+
         
+
+
 
 
 def main():
