@@ -38,6 +38,9 @@ def parse_args():
     return parser.parse_args()  # This allows the calling function to access the provided arguments in a structured way.
 
 def get_clients(clients_arg):
+    if clients_arg.lower() == 'all':  # If the user types "all" it returns the full list of IP addresses.
+        return CLIENT_IPS # Return all client IP addresses stored in the CLIENT_IPS list.
+    return [ip.strip() for ip in clients_arg.split(',')] # this splits the addresses into individual IPs, removes any spaces, and returns them as a list.
 
 
 def update_symlink(link_path, target_path):
@@ -47,5 +50,4 @@ def perform_backup(client_ip, backup_type, ssh_user):
 
 
 def main():
-
 
