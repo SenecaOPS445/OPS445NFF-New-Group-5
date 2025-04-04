@@ -86,9 +86,13 @@ def perform_backup(client_ip, backup_type, ssh_user):
         type_latest = os.path.join(dest_base, backup_type, 'latest')  # Create the type-specific latest link path
         update_symlink(type_latest, timestamp)  # Update the symlink to point to the new backup
 
-        
-
-
+        # Update latest_full if full backup
+        if backup_type == 'full':  # If the backup type is full
+            latest_full_link = os.path.join(dest_base, 'latest_full')  # Create the latest full link path
+            update_symlink(latest_full_link, backup_dir)  # Update the symlink to point to the new backup
+    except Exception as e:  # Check if the symlink update was successful
+        print(f"Error updating symlinks: {e}")  # Print error message if symlink update fails
+        raise
 
 
 def main():
