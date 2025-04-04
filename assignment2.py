@@ -68,6 +68,14 @@ def perform_backup(client_ip, backup_type, ssh_user):
         rsync_cmd.extend(['--link-dest', link_dest]) # Add the link destination to the command
     rsync_cmd.extend([source_path, backup_dir])  # Add source and destination to the command
 
+    # Run the rsync command
+    try:
+        subprocess.run(rsync_cmd, check=True)  # Run the rsync command
+    except subprocess.CalledProcessError as e:  # Check if the command was successful
+        print(f"rsync failed for {client}: {e}")  # Print error message if rsync fails
+        shutil.rmtree(backup_dir, ignore_errors=True)  # Remove the backup directory if rsync fails
+        raise
+
 
 def main():
 
