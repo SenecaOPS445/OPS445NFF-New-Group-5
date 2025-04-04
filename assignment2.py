@@ -98,3 +98,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
 def main():
 
 
+if __name__ == "__main__": # Check if the script is being run directly
+    main()  # Call the main function
+
+
