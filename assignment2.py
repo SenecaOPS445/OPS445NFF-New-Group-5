@@ -57,6 +57,18 @@ def perform_backup(client_ip, backup_type, ssh_user):
             raise Exception(f"No full backup found for differential backup on {client}")  # Print error message if latest full link does not exist
         link_dest = os.path.realpath(latest_full_link)  # Get the real path of the latest full link
 
+    # Build the rsync command
+    rsync_cmd = [  # Initialize the rsync command
+        'rsync', # Purpose: to synchronize files and directories
+        '-az', # Purpose: to archive and compress files
+        '--delete', # Purpose: to delete files that are not in the source
+        '-e', 'shh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
+    ]
+    if link_dest: # If link destination is not None
+        rsync_cmd.extend(['--link-dest', link_dest]) # Add the link destination to the command
+    rsync_cmd.extend([source_path, backup_dir])  # Add source and destination to the command
+
+
 def main():
 
 
