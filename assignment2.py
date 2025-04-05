@@ -28,6 +28,16 @@ def get_clients(clients_arg):
 
 
 def update_symlink(link_path, target_path):
+    '''
+    Update the symlink to point to the new backup.
+    '''
+    try:
+        if os.path.lexists(link_path):  # Check if the symlink exists
+            os.unlink(link_path)  # Remove the existing symlink
+        os.symlink(target_path, link_path)  # Create a new symlink
+    except OSError as e:  # Check if the symlink update was successful
+        print(f"Error updating symlink {link_path}: {e}")  # Print error message if symlink update fails
+        raise
 
 
 def perform_backup(client_ip, backup_type, ssh_user):
