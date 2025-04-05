@@ -74,7 +74,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
     try:
         os.makedirs(backup_dir, exist_ok=True) # Create the backup directory
     except OSError as e:
-        print(f"Error crating backup directory: {e}") # Print error message if directory creation fails
+        print(f"Error creating backup directory: {e}") # Print error message if directory creation fails
         raise
 
     # Determine link destination based on backup type
