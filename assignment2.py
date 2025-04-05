@@ -21,20 +21,16 @@ def get_client_name(ip):
 
 def parse_args():
     '''
-    Create an ArgumentParser object with a description of the script's purpose.
+    Create an ArgumentParser object with a description of the script's purpose. 
     '''
     parser = argparse.ArgumentParser(description='Perform backups of client machines.')  # Creates an object, used to process command-line args.
-
     parser.add_argument('-t', '--type', required=True,  # Add a required argument for specifying the type of backup
                         choices=['full', 'incremental', 'differential'],  # Restrict the allowed values to full, incremental, or differential
                         help='Type of backup to perform')  # Provide a help message for the argument
-
     parser.add_argument('-c', '--clients', required=True,  # Add argument for specifying client IPs that specifies which clients to back up.
                         help='Comma-separated list of client IPs or "all"')  # User can use a comma to separate or "all" to backup all clients.
-
     parser.add_argument('--ssh-user', default='lmde',  # Add an optional argument for specifying the SSH username (default: 'lmde')
                         help='SSH username for client connections (default: lmde)')
-
     return parser.parse_args()  # This allows the calling function to access the provided arguments in a structured way.
 
 def get_clients(clients_arg):
@@ -44,6 +40,20 @@ def get_clients(clients_arg):
 
 
 def update_symlink(link_path, target_path):
+    '''
+    Update the symlink to point to the new backup. This function takes
+    the symlink path and the target path as arguments. It checks if the
+    symlink exists and removes it if it does. Then it creates a new
+    symlink pointing to the target path. If an error occurs during the
+    symlink update, it prints an error message and raises an exception.
+    '''
+    try:
+        if os.path.lexists(link_path):  # Check if the symlink exists
+            os.unlink(link_path)  # Remove the existing symlink
+        os.symlink(target_path, link_path)  # Create a new symlink
+    except OSError as e:  # Check if the symlink update was successful
+        print(f"Error updating symlink {link_path}: {e}")  # Print error message if symlink update fails
+        raise
 
 
 def perform_backup(client_ip, backup_type, ssh_user):
@@ -64,7 +74,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
     try:
         os.makedirs(backup_dir, exist_ok=True) # Create the backup directory
     except OSError as e:
-        print(f"Error crating backup directory: {e}") # Print error message if directory creation fails
+        print(f"Error creating backup directory: {e}") # Print error message if directory creation fails
         raise
 
     # Determine link destination based on backup type
@@ -85,7 +95,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
         'rsync', # Purpose: to synchronize files and directories
         '-az', # Purpose: to archive and compress files
         '--delete', # Purpose: to delete files that are not in the source
-        '-e', 'shh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
+        '-e', 'ssh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
     ]
     if link_dest: # If link destination is not None
         rsync_cmd.extend(['--link-dest', link_dest]) # Add the link destination to the command
@@ -119,25 +129,16 @@ def perform_backup(client_ip, backup_type, ssh_user):
 
 
 def main():
-    args = parse_args()  # Parse command-line arguments    
-    
-    clients = get_clients(args.clients)  # Get list of clients from input (file or string)    
-    
+    args = parse_args()  # Parse command-line arguments
+    clients = get_clients(args.clients)  # Get list of clients from input (file or string)
     for client in clients:  # Loop through each client to perform backup
-        
         print(f"Starting {args.type} backup for {client}") # Notify backup start for this client
-        try:            
+        try:
             perform_backup(client, args.type, args.ssh_user) # Attempt to perform backup
-            
             print(f"Successfully completed {args.type} backup for {client}") # Notify backup success
         except Exception as e:
-         
             print(f"Failed {args.type} backup for {client}: {e}")  # Print error message if backup fails
             sys.exit() # Exit program with error status
 
-
-
-
-if __name__ == "__main__": # Check if the script is being run directly
+if __name__ == "__main__":  # Check if the script is being run directly
     main()  # Call the main function
-
