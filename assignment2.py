@@ -21,7 +21,7 @@ def get_client_name(ip):
 
 def parse_args():
     '''
-    Create an ArgumentParser object with a description of the script's purpose.
+    Create an ArgumentParser object with a description of the script's purpose. 
     '''
     parser = argparse.ArgumentParser(description='Perform backups of client machines.')  # Creates an object, used to process command-line args.
 
@@ -45,7 +45,11 @@ def get_clients(clients_arg):
 
 def update_symlink(link_path, target_path):
     '''
-    Update the symlink to point to the new backup.
+    Update the symlink to point to the new backup. This function takes
+    the symlink path and the target path as arguments. It checks if the
+    symlink exists and removes it if it does. Then it creates a new
+    symlink pointing to the target path. If an error occurs during the
+    symlink update, it prints an error message and raises an exception.
     '''
     try:
         if os.path.lexists(link_path):  # Check if the symlink exists
