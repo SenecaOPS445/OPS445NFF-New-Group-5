@@ -24,17 +24,13 @@ def parse_args():
     Create an ArgumentParser object with a description of the script's purpose. 
     '''
     parser = argparse.ArgumentParser(description='Perform backups of client machines.')  # Creates an object, used to process command-line args.
-
     parser.add_argument('-t', '--type', required=True,  # Add a required argument for specifying the type of backup
                         choices=['full', 'incremental', 'differential'],  # Restrict the allowed values to full, incremental, or differential
                         help='Type of backup to perform')  # Provide a help message for the argument
-
     parser.add_argument('-c', '--clients', required=True,  # Add argument for specifying client IPs that specifies which clients to back up.
                         help='Comma-separated list of client IPs or "all"')  # User can use a comma to separate or "all" to backup all clients.
-
     parser.add_argument('--ssh-user', default='lmde',  # Add an optional argument for specifying the SSH username (default: 'lmde')
                         help='SSH username for client connections (default: lmde)')
-
     return parser.parse_args()  # This allows the calling function to access the provided arguments in a structured way.
 
 def get_clients(clients_arg):
@@ -99,7 +95,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
         'rsync', # Purpose: to synchronize files and directories
         '-az', # Purpose: to archive and compress files
         '--delete', # Purpose: to delete files that are not in the source
-        '-e', 'shh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
+        '-e', 'ssh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
     ]
     if link_dest: # If link destination is not None
         rsync_cmd.extend(['--link-dest', link_dest]) # Add the link destination to the command
