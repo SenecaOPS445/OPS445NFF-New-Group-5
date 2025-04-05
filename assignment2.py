@@ -133,25 +133,16 @@ def perform_backup(client_ip, backup_type, ssh_user):
 
 
 def main():
-    args = parse_args()  # Parse command-line arguments    
-    
-    clients = get_clients(args.clients)  # Get list of clients from input (file or string)    
-    
+    args = parse_args()  # Parse command-line arguments
+    clients = get_clients(args.clients)  # Get list of clients from input (file or string)
     for client in clients:  # Loop through each client to perform backup
-        
         print(f"Starting {args.type} backup for {client}") # Notify backup start for this client
-        try:            
+        try:
             perform_backup(client, args.type, args.ssh_user) # Attempt to perform backup
-            
             print(f"Successfully completed {args.type} backup for {client}") # Notify backup success
         except Exception as e:
-         
             print(f"Failed {args.type} backup for {client}: {e}")  # Print error message if backup fails
             sys.exit() # Exit program with error status
 
-
-
-
-if __name__ == "__main__": # Check if the script is being run directly
+if __name__ == "__main__":  # Check if the script is being run directly
     main()  # Call the main function
-
