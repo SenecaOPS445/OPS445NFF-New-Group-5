@@ -43,7 +43,10 @@ def get_client_name(ip):
 
 def parse_args():
     '''
-    Create an ArgumentParser object with a description of the script's purpose.
+    Create an ArgumentParser object with a description of the script's purpose. This function
+    adds command-line arguments for specifying the type of backup and the clients to back up.
+    It also adds an optional argument for specifying the SSH username.
+    The function returns the parsed arguments.
     '''
     parser = argparse.ArgumentParser(description='Perform backups of client machines.')  # Creates an object, used to process command-line args.
     parser.add_argument('-t', '--type', required=True,  # Add a required argument for specifying the type of backup
