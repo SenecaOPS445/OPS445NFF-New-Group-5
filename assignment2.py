@@ -1,4 +1,25 @@
 #!/usr/bin/env python3
+'''
+Group Members:
+- Naveed Tokhi - 11794227
+- Samuel Enakhe Imina
+- Liam Waterman
+This script performs backups of client machines using rsync.
+It supports full, incremental, and differential backups.
+It uses SSH for secure file transfer and creates symlinks
+to the latest backups for easy access.
+The script takes command-line arguments to specify the type of backup
+and the clients to back up.
+The script is designed to be run on a backup server and
+requires SSH access to the client machines.
+The script uses the following libraries:
+- argparse: for parsing command-line arguments
+- os: for interacting with the operating system
+- subprocess: for running shell commands (e.g., rsync)
+- shutil: for copying files and directories
+- datetime: for getting the current date and time
+- sys: for exiting the program
+'''
 import argparse  # purpose: to parse command line arguments
 import os  # purpose: to interact with the operating system
 import subprocess  # purpose: to run shell commands, e.g., rsync
@@ -110,7 +131,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
     try:
         subprocess.run(rsync_cmd, check=True)  # Run the rsync command
     except subprocess.CalledProcessError as e:  # Check if the command was successful
-        print(f"rsync failed for {client}: {e}")  # Print error message if rsync fails
+        print(f"rsync failed for {client_name}: {e}")  # Print error message if rsync fails
         shutil.rmtree(backup_dir, ignore_errors=True)  # Remove the backup directory if rsync fails
         raise
 
@@ -150,6 +171,7 @@ def main():
         except Exception as e:
             print(f"Failed {args.type} backup for {client}: {e}")  # Print error message if backup fails
             sys.exit()  # Exit program with error status
+
 
 if __name__ == "__main__":  # Check if the script is being run directly
     main()  # Call the main function
