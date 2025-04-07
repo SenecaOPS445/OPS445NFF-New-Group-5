@@ -87,19 +87,19 @@ def perform_backup(client_ip, backup_type, ssh_user):
     if backup_type == 'incremental':  # if backup type is incremental
         latest_link = os.path.join(dest_base, 'latest')  # Create the latest link path
         if not os.path.exists(latest_link):  # Check if the latest link exists
-            raise Exception(f"No existing backup found for incremental backup on {client}")  # Print error message if latest link does not exist
+            raise Exception(f"No existing backup found for incremental backup on {client_name}")  # Print error message if latest link does not exist
         link_dest = os.path.realpath(latest_link)  # Get the real path of the latest link
     elif backup_type == 'differential':  # if backup type is differential
         latest_full_link = os.path.join(dest_base, 'latest_full')  # Create the latest full link path
         if not os.path.exists(latest_full_link):  # Check if the latest full link exists
-            raise Exception(f"No full backup found for differential backup on {client}")  # Print error message if latest full link does not exist
+            raise Exception(f"No full backup found for differential backup on {client_name}")  # Print error message if latest full link does not exist
         link_dest = os.path.realpath(latest_full_link)  # Get the real path of the latest full link
 
     # Build the rsync command
     rsync_cmd = [  # Initialize the rsync command
         'rsync',  # Purpose: to synchronize files and directories
         '-az',  # Purpose: to archive and compress files
-        '--delete',  # Purpose: Mirror source exactly
+        '--delete',  # Purpose: Mirror source exactly. Delete files not present in source
         '-e', 'ssh -o StrictHostKeyChecking=no',  # Purpose: to use ssh for remote access
     ]
     if link_dest:  # If link destination is not None
