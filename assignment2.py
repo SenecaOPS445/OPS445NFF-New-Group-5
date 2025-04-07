@@ -163,13 +163,19 @@ def main():
     '''
     args = parse_args()  # Parse command-line arguments
     clients = get_clients(args.clients)  # Get list of clients from input (file or string)
+    banner = "=" * 60  # Create a banner for visual separation in output
     for client in clients:  # Loop through each client to perform backup
-        print(f"Starting {args.type} backup for {client}")  # Notify backup start for this client
+        print(banner)
+        print(f"--- Starting {args.type} backup for {client} ---")  # Notify backup start for this client
+        print(banner)
         try:
             perform_backup(client, args.type, args.ssh_user)  # Attempt to perform backup
-            print(f"Successfully completed {args.type} backup for {client}") # Notify backup success
+            print(banner)
+            print(f"+++ Successfully completed {args.type} backup for {client} +++") # Notify backup success
+            print(banner)
         except Exception as e:
-            print(f"Failed {args.type} backup for {client}: {e}")  # Print error message if backup fails
+            print(f"!!! Failed {args.type} backup for {client}: {e} !!!")  # Print error message if backup fails
+            print(banner)
             sys.exit()  # Exit program with error status
 
 
