@@ -2,8 +2,8 @@
 '''
 Group Members:
 - Naveed Tokhi - 11794227
-- Samuel Enakhe Imina
-- Liam Waterman
+- Samuel Enakhe Imina - 135589224
+- Liam Waterman - 123151235
 This script performs backups of client machines using rsync.
 It supports full, incremental, and differential backups.
 It uses SSH for secure file transfer and creates symlinks
