@@ -13,15 +13,17 @@ CLIENT_MAPPING = {
     '192.168.27.10': 'Client-Two'
 }  # Mapping of client IPs to client names to be used in the directory structure
 
+
 def get_client_name(ip):
     '''
     Get the client name based on the IP address.
     '''
     return CLIENT_MAPPING.get(ip, ip)
 
+
 def parse_args():
     '''
-    Create an ArgumentParser object with a description of the script's purpose. 
+    Create an ArgumentParser object with a description of the script's purpose.
     '''
     parser = argparse.ArgumentParser(description='Perform backups of client machines.')  # Creates an object, used to process command-line args.
     parser.add_argument('-t', '--type', required=True,  # Add a required argument for specifying the type of backup
@@ -33,10 +35,14 @@ def parse_args():
                         help='SSH username for client connections (default: lmde)')
     return parser.parse_args()  # This allows the calling function to access the provided arguments in a structured way.
 
+
 def get_clients(clients_arg):
+    '''
+    Get the list of client IPs from the command line argument.
+    '''
     if clients_arg.lower() == 'all':  # If the user types "all" it returns the full list of IP addresses.
-        return CLIENT_IPS # Return all client IP addresses stored in the CLIENT_IPS list.
-    return [ip.strip() for ip in clients_arg.split(',')] # this splits the addresses into individual IPs, removes any spaces, and returns them as a list.
+        return CLIENT_IPS  # Return all client IP addresses stored in the CLIENT_IPS list.
+    return [ip.strip() for ip in clients_arg.split(',')]  # this splits the addresses into individual IPs, removes any spaces, and returns them as a list.
 
 
 def update_symlink(link_path, target_path):
@@ -65,40 +71,40 @@ def perform_backup(client_ip, backup_type, ssh_user):
     '''
     # Getting the client name based on the IP address
     client_name = get_client_name(client_ip)  # Get the client name based on the IP address
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S") # Get the current date and time
-    dest_base = f"/home/lmde/backup/{client_name}" # Destination base directory
-    backup_dir = os.path.join(dest_base, backup_type, timestamp) # Create the backup directory
-    source_path = f"{ssh_user}@{client_ip}:/home/lmde/dmuhammad4/" # Source path for the backup
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")  # Get the current date and time
+    dest_base = f"/home/lmde/backup/{client_name}"  # Destination base directory
+    backup_dir = os.path.join(dest_base, backup_type, timestamp)  # Create the backup directory
+    source_path = f"{ssh_user}@{client_ip}:/home/lmde/dmuhammad4/"  # Source path for the backup
 
     #creatting destination directory
     try:
-        os.makedirs(backup_dir, exist_ok=True) # Create the backup directory
+        os.makedirs(backup_dir, exist_ok=True)  # Create the backup directory
     except OSError as e:
-        print(f"Error creating backup directory: {e}") # Print error message if directory creation fails
+        print(f"Error creating backup directory: {e}")  # Print error message if directory creation fails
         raise
 
     # Determine link destination based on backup type
     link_dest = None  # Initialize link destination
-    if backup_type == 'incremental':  #if backup type is incremental
-        latest_link = os.path.join(dest_base, 'latest') # Create the latest link path
-        if not os.path.exists(latest_link): # Check if the latest link exists
-            raise Exception(f"No existing backup found for incremental backup on {client}") # Print error message if latest link does not exist
+    if backup_type == 'incremental':  # if backup type is incremental
+        latest_link = os.path.join(dest_base, 'latest')  # Create the latest link path
+        if not os.path.exists(latest_link):  # Check if the latest link exists
+            raise Exception(f"No existing backup found for incremental backup on {client}")  # Print error message if latest link does not exist
         link_dest = os.path.realpath(latest_link)  # Get the real path of the latest link
-    elif backup_type == 'differential': #if backup type is differential
+    elif backup_type == 'differential':  # if backup type is differential
         latest_full_link = os.path.join(dest_base, 'latest_full')  # Create the latest full link path
-        if not os.path.exists(latest_full_link): # Check if the latest full link exists
+        if not os.path.exists(latest_full_link):  # Check if the latest full link exists
             raise Exception(f"No full backup found for differential backup on {client}")  # Print error message if latest full link does not exist
         link_dest = os.path.realpath(latest_full_link)  # Get the real path of the latest full link
 
     # Build the rsync command
     rsync_cmd = [  # Initialize the rsync command
-        'rsync', # Purpose: to synchronize files and directories
-        '-az', # Purpose: to archive and compress files
-        '--delete', # Purpose: to delete files that are not in the source
-        '-e', 'ssh -o StrictHostKeyChecking=no', # Purpose: to use ssh for remote access
+        'rsync',  # Purpose: to synchronize files and directories
+        '-az',  # Purpose: to archive and compress files
+        '--delete',  # Purpose: to delete files that are not in the source
+        '-e', 'ssh -o StrictHostKeyChecking=no',  # Purpose: to use ssh for remote access
     ]
-    if link_dest: # If link destination is not None
-        rsync_cmd.extend(['--link-dest', link_dest]) # Add the link destination to the command
+    if link_dest:  # If link destination is not None
+        rsync_cmd.extend(['--link-dest', link_dest])  # Add the link destination to the command
     rsync_cmd.extend([source_path, backup_dir])  # Add source and destination to the command
 
     # Run the rsync command
@@ -132,13 +138,13 @@ def main():
     args = parse_args()  # Parse command-line arguments
     clients = get_clients(args.clients)  # Get list of clients from input (file or string)
     for client in clients:  # Loop through each client to perform backup
-        print(f"Starting {args.type} backup for {client}") # Notify backup start for this client
+        print(f"Starting {args.type} backup for {client}")  # Notify backup start for this client
         try:
-            perform_backup(client, args.type, args.ssh_user) # Attempt to perform backup
+            perform_backup(client, args.type, args.ssh_user)  # Attempt to perform backup
             print(f"Successfully completed {args.type} backup for {client}") # Notify backup success
         except Exception as e:
             print(f"Failed {args.type} backup for {client}: {e}")  # Print error message if backup fails
-            sys.exit() # Exit program with error status
+            sys.exit()  # Exit program with error status
 
 if __name__ == "__main__":  # Check if the script is being run directly
     main()  # Call the main function
