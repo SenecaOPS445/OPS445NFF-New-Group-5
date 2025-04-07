@@ -4,7 +4,6 @@ import os  # purpose: to interact with the operating system
 import subprocess  # purpose: to run shell commands, e.g., rsync
 import shutil  # purpose: to copy files
 from datetime import datetime  # purpose: to get the current date and time
-import getpass  # purpose: to get the current user
 import sys  # purpose: to exit the program
 
 CLIENT_IPS = ['192.168.27.5', '192.168.27.10']  # Client-One and Client-Two
@@ -76,7 +75,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
     backup_dir = os.path.join(dest_base, backup_type, timestamp)  # Create the backup directory
     source_path = f"{ssh_user}@{client_ip}:/home/lmde/dmuhammad4/"  # Source path for the backup
 
-    #creatting destination directory
+    # creatting destination directory
     try:
         os.makedirs(backup_dir, exist_ok=True)  # Create the backup directory
     except OSError as e:
@@ -100,7 +99,7 @@ def perform_backup(client_ip, backup_type, ssh_user):
     rsync_cmd = [  # Initialize the rsync command
         'rsync',  # Purpose: to synchronize files and directories
         '-az',  # Purpose: to archive and compress files
-        '--delete',  # Purpose: to delete files that are not in the source
+        '--delete',  # Purpose: Mirror source exactly
         '-e', 'ssh -o StrictHostKeyChecking=no',  # Purpose: to use ssh for remote access
     ]
     if link_dest:  # If link destination is not None
@@ -135,6 +134,12 @@ def perform_backup(client_ip, backup_type, ssh_user):
 
 
 def main():
+    '''
+    This function is responsible for parsing command-line arguments, getting the list
+    of clients, and performing the backup for each client. It handles
+    any exceptions that occur during the backup process and prints
+    appropriate error messages.
+    '''
     args = parse_args()  # Parse command-line arguments
     clients = get_clients(args.clients)  # Get list of clients from input (file or string)
     for client in clients:  # Loop through each client to perform backup
